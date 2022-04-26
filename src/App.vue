@@ -1,6 +1,6 @@
 <template>
-  <section class="navigation">
-    <div class="navigation__circle" :class="{'navigation__circle_right': clickedElement === 4 }"/>
+  <section class="navigation" ref="navigation">
+    <div class="navigation__circle"/>
     <div class="navigation__button-wrap">
       <button v-for="index in 4" class="navigation__button" @click="onClick(index)" :key="index">
         {{index}}
@@ -13,12 +13,22 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 const clickedElement = ref(0);
 const onClick = (index) => {
   clickedElement.value = index - 1;
 };
+
+const navigation = ref();
+
+const leftPadding = computed(() => {
+  if (clickedElement.value < 4) {
+    return `${5 + clickedElement.value * 80}px`;
+  }
+  return `${navigation.value.clientWidth - 75}px`;
+});
+
 </script>
 
 <style lang="scss" scoped>
@@ -51,16 +61,12 @@ const onClick = (index) => {
     height: 60px;
     position: absolute;
     top: -20px;
-    left: calc(5px + v-bind(clickedElement) * 80px);
     background: #5374b2;
     z-index: 10;
     border-radius: 100%;
     border: 5px solid white;
     transition: 2s all;
-
-    &_right {
-      left: calc(100% - 75px);
-    }
+    left: v-bind(leftPadding);
   }
 }
 </style>
